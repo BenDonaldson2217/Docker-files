@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+  backend:
+    image: bendonaldson2217/backend
+    ports:
+      - target:8080
+        protocol: tcp
+    depends_on:
+      - mysql
+  nginx:
+    image: nginx:latest
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+    depends_on:
+      - frontend
+    volumnes:
+      - type: bind
+        source ./nginx.conf
+        target: /etc/nginx/nginx.conf
+  frontend:
+    container_name: frontend
+    image: bendonaldson2217/frontend
+    ports:
+      - target: 3000
+      protocol: tcp
+    depends_on:
+     - backend
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: ToDoList
+      MYSQL_ROOT_PASSWORD: 'password'
+    volumes:
+      - database:/var/lib/mysql
+volumes:
+  database:
